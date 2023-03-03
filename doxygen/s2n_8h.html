@@ -23,7 +23,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="s2n-logo-github.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">AWS s2n-tls<span id="projectnumber">&#160;-2e67a8af</span>
+   <div id="projectname">AWS s2n-tls<span id="projectnumber">&#160;-e3cecf2d</span>
    </div>
    <div id="projectbrief">s2n-tls is a C99 implementation of the TLS/SSL protocols that is designed to be simple, small, fast, and with security as a priority.</div>
   </td>
@@ -392,6 +392,8 @@ Functions</h2></td></tr>
 <tr class="separator:aa0729c67323dbe0604e6b55f82afb6f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6de9d794c410474e9851880bd4914025"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a6de9d794c410474e9851880bd4914025">s2n_config_set_send_buffer_size</a> (struct s2n_config *config, uint32_t size)</td></tr>
 <tr class="separator:a6de9d794c410474e9851880bd4914025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873c1969c18fdf8663a9b593e62b9460"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a873c1969c18fdf8663a9b593e62b9460">s2n_config_set_recv_multi_record</a> (struct s2n_config *config, bool enabled)</td></tr>
+<tr class="separator:a873c1969c18fdf8663a9b593e62b9460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a079022d5c18f4ffd64c1c6dedb3bbc66"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#a079022d5c18f4ffd64c1c6dedb3bbc66">s2n_config_set_verify_host_callback</a> (struct s2n_config *config, <a class="el" href="s2n_8h.html#a8aa56850695a02753f726ea9860ec383">s2n_verify_host_fn</a>, void *data)</td></tr>
 <tr class="separator:a079022d5c18f4ffd64c1c6dedb3bbc66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affff244d7ed6f3b8d1f885df1b307f4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s2n_8h.html#affff244d7ed6f3b8d1f885df1b307f4e">s2n_config_set_check_stapled_ocsp_response</a> (struct s2n_config *config, uint8_t check_ocsp)</td></tr>
@@ -1507,7 +1509,7 @@ Safety</h1>
 </ul>
 </li>
 <li><code>S2N_CLIENT_HELLO_CB_NONBLOCKING</code>:<ul>
-<li>In non-blocking mode, s2n-tls expects the callback to not complete its work. If the callback returns a response code of 0 s2n-tls will return <code>S2N_FAILURE</code> with <code>S2N_ERR_T_BLOCKED</code> error type and <code>s2n_blocked_status</code> set to <code>S2N_BLOCKED_ON_APPLICATION_INPUT</code>. The handshake is paused and further calls to <code>s2n_negotiate</code> will continue to return the same error until <code>s2n_client_hello_cb_done</code> is invoked for the <code>s2n_connection</code> to resume the handshake. This allows s2n-tls clients to process client_hello without blocking and then resume the handshake at a later time. If any of the connection properties were changed on the basis of the server_name extension then <code>s2n_connection_server_name_extension_used</code> must be invoked before marking the callback done. </li>
+<li>In non-blocking mode, s2n-tls expects the callback to not complete its work. If the callback returns a response code of 0, s2n-tls will return <code>S2N_FAILURE</code> with <code>S2N_ERR_T_BLOCKED</code> error type and <code>s2n_blocked_status</code> set to <code>S2N_BLOCKED_ON_APPLICATION_INPUT</code>. The handshake is paused and further calls to <code>s2n_negotiate</code> will continue to return the same error until <code>s2n_client_hello_cb_done</code> is invoked for the <code>s2n_connection</code> to resume the handshake. If any of the connection properties were changed on the basis of the server_name extension then <code>s2n_connection_server_name_extension_used</code> must be invoked before marking the callback done. </li>
 </ul>
 </li>
 </ul>
@@ -1652,7 +1654,7 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Enum used to define the type, if any, of certificate status request an S2N_CLIENT should make during the handshake. The only supported status request type is OCSP, <code>S2N_STATUS_REQUEST_OCSP</code>. </p>
+<p >Enum used to define the type, if any, of certificate status request a connection should make during the handshake. The only supported status request type is OCSP, <code>S2N_STATUS_REQUEST_OCSP</code>. </p>
 
 </div>
 </div>
@@ -2787,6 +2789,7 @@ Safety</h1>
       </table>
 </div><div class="memdoc">
 <p >Copies into the <code>out</code> buffer <code>max_length</code> bytes of the cipher_suites on the ClientHello.</p>
+<p >Note: SSLv2 ClientHello cipher suites follow a different structure than modern ClientHello messages. See <a href="https://tools.ietf.org/html/rfc5246#appendix-E.2">RFC5246</a>. To determine whether a ClientHello is an SSLv2 ClientHello, you will need to use <a class="el" href="s2n_8h.html#ad2a608603c7dbe9203a7c8f8b63ee1b8">s2n_connection_get_client_hello_version()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ch</td><td>The Client Hello handle </td></tr>
@@ -3015,7 +3018,8 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Copies <code>max_length</code> bytes of the ClientHello message into the <code>out</code> buffer. The ClientHello instrumented using this function will have the Random bytes zero-ed out. For SSLv2 ClientHello messages, the raw message contains only the cipher_specs, session_id and members portions of the hello message (see <a href="https://tools.ietf.org/html/rfc5246#appendix-E.2">RFC5246</a>). To access other members, you may use <a class="el" href="s2n_8h.html#ad2a608603c7dbe9203a7c8f8b63ee1b8">s2n_connection_get_client_hello_version()</a>, <a class="el" href="s2n_8h.html#aafa9d12438841f2a47907b244eccd7cc">s2n_connection_get_client_protocol_version()</a> and <a class="el" href="s2n_8h.html#acc34cfe4ca708912cf9309cc98000c08">s2n_connection_get_session_id_length()</a> accessors functions.</p>
+<p >Copies <code>max_length</code> bytes of the ClientHello message into the <code>out</code> buffer. The ClientHello instrumented using this function will have the Random bytes zero-ed out.</p>
+<p >Note: SSLv2 ClientHello messages follow a different structure than more modern ClientHello messages. See <a href="https://tools.ietf.org/html/rfc5246#appendix-E.2">RFC5246</a>. In addition, due to how s2n-tls parses SSLv2 ClientHellos, the raw message is missing the first three bytes (the msg_type and version) and instead begins with the cipher_specs. To determine whether a ClientHello is an SSLv2 ClientHello, you will need to use <a class="el" href="s2n_8h.html#ad2a608603c7dbe9203a7c8f8b63ee1b8">s2n_connection_get_client_hello_version()</a>. To get the protocol version advertised in the SSLv2 ClientHello (which may be higher than SSLv2), you will need to use <a class="el" href="s2n_8h.html#aafa9d12438841f2a47907b244eccd7cc">s2n_connection_get_client_protocol_version()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ch</td><td>The Client Hello handle </td></tr>
@@ -4716,6 +4720,44 @@ Safety</h1>
 
 </div>
 </div>
+<a id="a873c1969c18fdf8663a9b593e62b9460" name="a873c1969c18fdf8663a9b593e62b9460"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a873c1969c18fdf8663a9b593e62b9460">&#9670;&#160;</a></span>s2n_config_set_recv_multi_record()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="s2n_8h.html#af1c2b8586154a9094d6978137ef001ac">S2N_API</a> int s2n_config_set_recv_multi_record </td>
+          <td>(</td>
+          <td class="paramtype">struct s2n_config *&#160;</td>
+          <td class="paramname"><em>config</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Enable or disable recieving of multiple TLS records in a single s2n_recv call</p>
+<p >Legacy behavior is to return after reading a single TLS record which may not be the most efficient way to invoke this function, especially if larger receive buffers are used.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>The configuration object being updated </td></tr>
+    <tr><td class="paramname">enabled</td><td>Set to <code>true</code> if multiple record recieve is to be enabled; <code>false</code> to disable. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>S2N_SUCCESS on success. S2N_FAILURE on failure </dd></dl>
+
+</div>
+</div>
 <a id="a6de9d794c410474e9851880bd4914025" name="a6de9d794c410474e9851880bd4914025"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6de9d794c410474e9851880bd4914025">&#9670;&#160;</a></span>s2n_config_set_send_buffer_size()</h2>
 
@@ -4743,7 +4785,7 @@ Safety</h1>
 </div><div class="memdoc">
 <p >Set a custom send buffer size.</p>
 <p >This buffer is used to stage records for sending. By default, enough memory is allocated to hold a single record of the maximum size configured for the connection. With the default fragment size, that is about 8K bytes.</p>
-<p >Less memory can be allocated for the send buffer, but this will result in smaller, more fragmented records and increased overhead. While the absolute minimum size required is 1031 bytes, at least 2K bytes is recommended for reasonable record sizes.</p>
+<p >Less memory can be allocated for the send buffer, but this will result in smaller, more fragmented records and increased overhead. While the absolute minimum size required is 1034 bytes, at least 2K bytes is recommended for reasonable record sizes.</p>
 <p >More memory can be allocated for the send buffer. This will result in s2n-tls buffering multiple records before sending them, reducing system write calls. At least 17K bytes is recommended for this use case, or at least 35K bytes if larger fragment sizes are used via <code><a class="el" href="s2n_8h.html#a11c72914bfc09a9174b6a7b019e5aa5c">s2n_connection_prefer_throughput()</a></code>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -4977,7 +5019,7 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Sets up an S2N_CLIENT to request the server certificate status during an SSL handshake. If set to S2N_STATUS_REQUEST_NONE, no status request is made.</p>
+<p >Sets up a connection to request the certificate status of a peer during an SSL handshake. If set to S2N_STATUS_REQUEST_NONE, no status request is made.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">config</td><td>The configuration object being updated </td></tr>
@@ -6788,7 +6830,7 @@ Safety</h1>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Check is the connection is OCSP stapled.</p>
+<p >Check if the connection is OCSP stapled.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">conn</td><td>A pointer to the s2n_connection object</td></tr>
@@ -9032,7 +9074,7 @@ Safety</h1>
 <div class="line">    bytes_read += r;</div>
 <div class="line">} <span class="keywordflow">while</span> (blocked != S2N_NOT_BLOCKED);</div>
 <div class="ttc" id="as2n_8h_html_a3b67ff058796d4c6c6caddfd0f10274e"><div class="ttname"><a href="s2n_8h.html#a3b67ff058796d4c6c6caddfd0f10274e">s2n_recv</a></div><div class="ttdeci">S2N_API ssize_t s2n_recv(struct s2n_connection *conn, void *buf, ssize_t size, s2n_blocked_status *blocked)</div></div>
-<div class="ttc" id="as2n_8h_html_af70ca0b089daa98cd79a424d3f6af15d"><div class="ttname"><a href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a></div><div class="ttdeci">s2n_blocked_status</div><div class="ttdef"><b>Definition:</b> s2n.h:1861</div></div>
+<div class="ttc" id="as2n_8h_html_af70ca0b089daa98cd79a424d3f6af15d"><div class="ttname"><a href="s2n_8h.html#af70ca0b089daa98cd79a424d3f6af15d">s2n_blocked_status</a></div><div class="ttdeci">s2n_blocked_status</div><div class="ttdef"><b>Definition:</b> s2n.h:1768</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
